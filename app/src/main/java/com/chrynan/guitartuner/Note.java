@@ -262,6 +262,37 @@ public class Note implements Serializable{
         return -1;
     }
 
+    public static double getFrequencyFromString(String s){
+        switch(s){
+            case A:
+                return FREQUENCY_A_4;
+            case A_SHARP:
+                return FREQUENCY_A_SHARP_4;
+            case B:
+                return FREQUENCY_B_4;
+            case C:
+                return FREQUENCY_C_4;
+            case C_SHARP:
+                return FREQUENCY_C_SHARP_4;
+            case D:
+                return FREQUENCY_D_4;
+            case D_SHARP:
+                return FREQUENCY_D_SHARP_4;
+            case E:
+                return FREQUENCY_E_4;
+            case F:
+                return FREQUENCY_F_4;
+            case F_SHARP:
+                return FREQUENCY_F_SHARP_4;
+            case G:
+                return FREQUENCY_G_4;
+            case G_SHARP:
+                return FREQUENCY_G_SHARP_4;
+            default:
+                return DEFAULT_FREQUENCY;
+        }
+    }
+
     public void fromJSON(JSONObject obj){
         try{
             if(obj.has("id")){

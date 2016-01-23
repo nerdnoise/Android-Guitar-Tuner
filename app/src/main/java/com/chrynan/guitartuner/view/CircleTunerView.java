@@ -36,7 +36,7 @@ public class CircleTunerView extends RelativeLayout implements TunerUpdate {
     private CircleView circle;
     private IndicatorView indicator;
     private boolean allowAddView = false;
-    private Animation rotateAnimation;
+    private IndicatorAnimator anim;
 
     public CircleTunerView(Context context){
         super(context);
@@ -73,34 +73,18 @@ public class CircleTunerView extends RelativeLayout implements TunerUpdate {
         circle.setLayoutParams(params);
         addView(circle);
         allowAddView = false;
+        anim = new IndicatorAnimator(indicator);
     }
 
     @Override
     public void updateNote(Note newNote, PitchDetectionResult result) {
-        Log.d(TAG, "updateNote: note = " + newNote.getNote() + "; actual frequency = " + newNote.getActualFrequency());
         //I'm very sloppily casting to different values way too often
         //Because the view should instantly reflect the update but I'm animating it to the update point, there will be a delay
         note = newNote;
-        float oldAngle = indicator.getAngle();
-        float newAngle;
-        double angleInterval = Math.toDegrees(dial.getAngleInterval());
-        int percentage, angleDifference;
-        if(note.getActualFrequency() < note.getFrequency()){
-            percentage = (int) (((note.getActualFrequency() - note.getNoteBelowFrequency()) * 100)
-                            / (note.getFrequency() - note.getNoteBelowFrequency()));
-            angleDifference = (int) ((percentage / 100) * angleInterval);
-            newAngle = (float) ((angleInterval * note.getCToBNotesIndex()) - angleDifference);
-        }else{
-            percentage = (int) (((note.getActualFrequency() - note.getFrequency()) * 100)
-                    / (note.getNoteAboveFrequency() - note.getFrequency()));
-            angleDifference = (int) ((percentage / 100) * angleInterval);
-            newAngle = (float) ((angleInterval * note.getCToBNotesIndex()) + angleDifference);
-        }
-        rotateAnimation = new RotateAnimation(oldAngle, newAngle, indicator.getCenterX(), indicator.getCenterY());
-        rotateAnimation.setDuration(250);
-        rotateAnimation.setRepeatCount(0);
-        indicator.setAnimation(rotateAnimation);
         circle.setText(note.getNote());
+        if(newNote.getFrequency() != Note.UNKNOWN_FREQUENCY) {
+            anim.start(note, Math.toDegrees(dial.getAngleInterval()));
+        }
     }
 
     @Override
@@ -176,6 +160,20 @@ public class CircleTunerView extends RelativeLayout implements TunerUpdate {
 
     public void setInnerCircleTextColor(int innerCircleTextColor) {
         circle.setTextColor(innerCircleTextColor);
+    }
+
+    //delegating methods
+    public void addOnNoteSelectedListener(DialView.OnNoteSelectedListener l){
+        if(dial != null){
+            dial.addOnNoteSelectedListener(l);
+        }
+    }
+
+    public boolean removeOnNoteSelectedListener(DialView.OnNoteSelectedListener l){
+        if(dial != null){
+            return dial.removeOnNoteSelectedListener(l);
+        }
+        return false;
     }
 
 

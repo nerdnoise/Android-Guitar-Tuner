@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,9 +31,9 @@ public class IndicatorView extends View {
     private boolean isCenterX;
     private boolean isCenterY;
 
-    private Point point1;
-    private Point point2;
-    private Point point3;
+    private PointF point1;
+    private PointF point2;
+    private PointF point3;
 
     public IndicatorView(Context context){
         super(context);
@@ -106,16 +107,14 @@ public class IndicatorView extends View {
             centerY = length;
         }
         bottomWidth = length / 2;
-        showAngle((float) Math.toRadians(270));
+        showAngle(270);
     }
 
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw");
         path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
-        Log.d(TAG, "point1.x = " + point1.x + "; point2.x = " + point2.x);
         path.moveTo(point1.x, point1.y);
         path.lineTo(point2.x, point2.y);
         path.lineTo(point3.x, point3.y);
@@ -157,23 +156,29 @@ public class IndicatorView extends View {
         this.angle = angle;
     }
 
-    private void showAngle(float angle){
+    public void showAngle(float angle){
         //angle should be between 0 and 360 in degrees
         //the angle corresponds to the "pointer" of the indicator
         //x = centerCircleX + radius * cos(angle)
         //y = centerCircleY + radius * sin(angle)
         //indicator "pointer"
+        Log.d(TAG, "showAngle: angle = " + angle);
         this.angle = angle;
-        point1 = new Point((int) (centerX + (length * Math.cos(angle))), (int) (centerY + (length * Math.sin(angle))));
-        int bRadius = bottomWidth / 2;
+        point1 = new PointF((float) (centerX + (length * Math.cos(angle))),(float) (centerY + (length * Math.sin(angle))));
+        double bRadius = ((double) bottomWidth) / 2;
         float bAngle = angle - 90;
         bAngle = (bAngle < 0) ? 360 - Math.abs(bAngle) : bAngle;
-        bAngle = (bAngle > 360) ? bAngle - 360 : bAngle;
-        point2 = new Point((int) (centerX + (bRadius * Math.cos(bAngle))), (int) (centerY + (bRadius * Math.sin(bAngle))));
+        bAngle = (bAngle > 360) ? bAngle % 360 : bAngle;
+        point2 = new PointF((float) (centerX + (bRadius * Math.cos(bAngle))), (float) (centerY + (bRadius * Math.sin(bAngle))));
         bAngle = angle + 90;
         bAngle = (bAngle < 0) ? 360 - Math.abs(bAngle) : bAngle;
-        bAngle = (bAngle > 360) ? bAngle - 360 : bAngle;
-        point3 = new Point((int) (centerX + (bRadius * Math.cos(bAngle))), (int) (centerY + bRadius * Math.sin(bAngle)));
+        bAngle = (bAngle > 360) ? bAngle % 360 : bAngle;
+        point3 = new PointF((float) (centerX + (bRadius * Math.cos(bAngle))), (float) (centerY + bRadius * Math.sin(bAngle)));
+        invalidate();
+    }
+
+    public void showAngle(){
+        showAngle(angle);
     }
 
     public boolean isCenterX() {

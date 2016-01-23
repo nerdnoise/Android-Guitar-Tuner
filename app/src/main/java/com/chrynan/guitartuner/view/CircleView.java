@@ -6,12 +6,16 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
+import com.chrynan.guitartuner.Note;
 import com.chrynan.guitartuner.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chRyNaN on 1/17/2016.
@@ -31,6 +35,8 @@ public class CircleView extends View {
     private String text;
     private boolean centerX;
     private boolean centerY;
+
+    private List<OnNoteSelectedListener> listeners;
 
     public CircleView(Context context){
         super(context);
@@ -54,6 +60,7 @@ public class CircleView extends View {
     }
 
     private void init(AttributeSet attrs){
+        listeners = new ArrayList<>();
         text = "A";
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -125,6 +132,45 @@ public class CircleView extends View {
         textBounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
         canvas.drawText(text, circleCenterX, circleCenterY + (textBounds.height() / 2), textPaint);
+    }
+
+    /*
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                return true;
+            case MotionEvent.ACTION_UP:
+                if(text != null && !text.equals(Note.UNKNOWN_NOTE)){
+                    alertOnNoteSelected(new Note(Note.getFrequencyFromString(text)), e.getX(), e.getY());
+                }
+                return true;
+        }
+        return super.onTouchEvent(e);
+    }*/
+
+    public interface OnNoteSelectedListener{
+        void onNoteSelected(Note note, float x, float y);
+    }
+
+    public void addOnNoteSelectedListener(OnNoteSelectedListener l){
+        if(listeners == null){
+            listeners = new ArrayList<>();
+        }
+        listeners.add(l);
+    }
+
+    public boolean removeOnNoteSelectedListener(OnNoteSelectedListener l){
+        if(listeners != null){
+            return listeners.remove(l);
+        }
+        return false;
+    }
+
+    private void alertOnNoteSelected(Note note, float x, float y){
+        for(OnNoteSelectedListener l : listeners){
+            l.onNoteSelected(note, x, y);
+        }
     }
 
     public int getTextSize(){

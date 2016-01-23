@@ -10,10 +10,14 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.chrynan.guitartuner.Note;
 import com.chrynan.guitartuner.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chRyNaN on 1/17/2016.
@@ -39,6 +43,8 @@ public class DialView extends View {
     private Rect textBounds;
     private CircleTunerView.NotePosition[] notePositions;
 
+    private List<OnNoteSelectedListener> listeners;
+
     public DialView(Context context){
         super(context);
         init(null);
@@ -61,6 +67,7 @@ public class DialView extends View {
     }
 
     private void init(AttributeSet attrs){
+        listeners = new ArrayList<>();
         notePositions = new CircleTunerView.NotePosition[12];
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -115,8 +122,8 @@ public class DialView extends View {
         circleCenterX = (int) xWidth / 2;
         circleCenterY = (int) yHeight / 2;
         //for the bounds of the outer circle
-        float startX = Math.abs(((diameter - width) - xWidth) / 2);;
-        float startY = Math.abs(((diameter - width) - yHeight) / 2);;
+        float startX = Math.abs(((diameter - width) - xWidth) / 2);
+        float startY = Math.abs(((diameter - width) - yHeight) / 2);
         if(!centerX) {
             circleCenterX = diameter / 2;
             startX = 0f;
@@ -160,6 +167,66 @@ public class DialView extends View {
             canvas.drawText(n.getNote(), n.getX(), n.getY(), textPaint);
         }
         canvas.restore();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e){
+        switch(e.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                return true;
+            case MotionEvent.ACTION_UP:
+                //determine where the user selected and what note that is
+                float x = e.getX();
+                float y = e.getY();
+                //(x - x0)^2 + (y - y0)^2 = r^2
+                //gives us the radius of the touch coordinates with respect to the center circle coordinates
+                double tRadius = Math.sqrt(Math.pow((x - circleCenterX), 2) + Math.pow((y - circleCenterY), 2));
+                //check that the tRadius value is within the radius and the radius plus the width value
+                if(tRadius >= diameter / 2 - width && tRadius <= diameter / 2){
+                    //now that we know the touch point is on the dial, we can compute its angle
+                    float a = (float) Math.toDegrees(Math.atan2(y - circleCenterY, x - circleCenterX));
+                    a = (a < 0) ? 360 - Math.abs(a) : a;
+                    a = (a > 360) ? a % 360 : a;
+                    //now that we have the angle, we can figure out which note that corresponds to
+                    int i;
+                    float ai = (float) Math.toDegrees(angleInterval);
+                    float r = ai / 2;
+                    for(i = 0; i < 12; i++){
+                        if(a >= ai * i - r && a < ai * i + r){
+                            break;
+                        }
+                    }
+                    i = (i >= 12) ? 11 : i;
+                    Note n = new Note(Note.C4_TO_B4_VALUES[i]);
+                    alertOnNoteSelected(n, x, y);
+                }
+                return false;
+        }
+        return super.onTouchEvent(e);
+    }
+
+    public interface OnNoteSelectedListener{
+        void onNoteSelected(Note note, float x, float y);
+    }
+
+    public void addOnNoteSelectedListener(OnNoteSelectedListener l){
+        if(listeners == null){
+            listeners = new ArrayList<>();
+        }
+        listeners.add(l);
+    }
+
+    public boolean removeOnNoteSelectedListener(OnNoteSelectedListener l){
+        if(listeners != null){
+            return listeners.remove(l);
+        }
+        return false;
+    }
+
+    private void alertOnNoteSelected(Note note, float x, float y){
+        for(OnNoteSelectedListener l : listeners){
+            l.onNoteSelected(note, x, y);
+        }
     }
 
     public int getDiameter(){
