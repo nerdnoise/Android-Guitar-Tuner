@@ -30,7 +30,6 @@ public class CircleTunerView extends RelativeLayout implements TunerUpdate {
     public static final int DEFAULT_INDICATOR_COLOR = Color.parseColor("#FBFAFA");
 
     private Note note;
-    private NotePosition[] notePositions;
 
     private DialView dial;
     private CircleView circle;

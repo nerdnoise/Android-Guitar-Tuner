@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -106,6 +107,28 @@ public class DialView extends View {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setElevation(){
         setElevation(1f);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        int wMode = MeasureSpec.getMode(widthMeasureSpec);
+        int hMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        switch(wMode){
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                width = (width > height) ? height : width;
+                break;
+        }
+        switch(hMode){
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                height = (height > width) ? width : height;
+                break;
+        }
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -253,7 +276,7 @@ public class DialView extends View {
         return color;
     }
 
-    public void setColor(int color){
+    public void setColor(@ColorInt int color){
         this.color = color;
         this.paint.setColor(color);
         invalidate();
@@ -263,7 +286,7 @@ public class DialView extends View {
         return textColor;
     }
 
-    public void setTextColor(int textColor){
+    public void setTextColor(@ColorInt int textColor){
         this.textColor = textColor;
         this.textPaint.setColor(textColor);
         invalidate();

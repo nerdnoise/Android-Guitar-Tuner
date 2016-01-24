@@ -6,6 +6,8 @@
     <item name="very_dark_primary" type="color">#263238</item>
     <item name="accent" type="color">#FF9800</item>
     <item name="dial" type="color">#FF9800</item>
+    <item name="green" type="color">#85D52C</item>
+    <item name="accent_two" type="color">#85D52C</item>
     <item name="white" type="color">#FFFFFF</item>
     <item name="text" type="color">#FFFFFF</item>
     <item name="primary" type="color">#B0BEC5</item>

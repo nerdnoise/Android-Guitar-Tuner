@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -88,6 +89,28 @@ public class IndicatorView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        int wMode = MeasureSpec.getMode(widthMeasureSpec);
+        int hMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        switch(wMode){
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                width = (width > height) ? height : width;
+                break;
+        }
+        switch(hMode){
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                height = (height > width) ? width : height;
+                break;
+        }
+        setMeasuredDimension(width, height);
+    }
+
+    @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         float xPad = (float) (getPaddingLeft() + getPaddingRight());
         float yPad = (float) (getPaddingTop() + getPaddingBottom());
@@ -126,7 +149,7 @@ public class IndicatorView extends View {
         return color;
     }
 
-    public void setColor(int color){
+    public void setColor(@ColorInt int color){
         this.color = color;
         paint.setColor(color);
         invalidate();

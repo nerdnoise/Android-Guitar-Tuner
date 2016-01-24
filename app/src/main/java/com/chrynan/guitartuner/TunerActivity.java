@@ -76,6 +76,7 @@ public class TunerActivity extends AppCompatActivity {
     public void transitionToPitchFragment(Note note, float x, float y){
         pitchFragment = PitchFragment.newInstance(note, x, y);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, pitchFragment, PitchFragment.TAG).commit();
+        tunerFragment.stop();
         showCancel = true;
         invalidateOptionsMenu();
     }
@@ -93,6 +94,7 @@ public class TunerActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction().remove(pitchFragment).commit();
                     //to prevent flashing the fragment before removing it, execute pending transactions inmediately
                     getSupportFragmentManager().executePendingTransactions();
+                    tunerFragment.start();
                     showCancel = false;
                     invalidateOptionsMenu();
                 }
@@ -108,6 +110,7 @@ public class TunerActivity extends AppCompatActivity {
             anim.start();
         }else{
             getSupportFragmentManager().beginTransaction().remove(pitchFragment).commit();
+            tunerFragment.start();
             showCancel = false;
             invalidateOptionsMenu();
         }

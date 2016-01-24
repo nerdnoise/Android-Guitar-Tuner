@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chrynan.guitartuner.util.PermissionUtils;
-import com.chrynan.guitartuner.view.CircleTunerView;
 import com.chrynan.guitartuner.view.DialView;
+import com.chrynan.guitartuner.view.TunerView;
 
 /**
  * Created by chRyNaN on 1/22/2016.
@@ -18,7 +18,7 @@ import com.chrynan.guitartuner.view.DialView;
 public class TunerFragment extends Fragment {
     public static final String TAG = TunerFragment.class.getSimpleName();
     public static final int AUDIO_PERMISSION_REQUEST_CODE = 4;
-    private CircleTunerView view;
+    private TunerView view;
     private Tuner tuner;
 
     @Override
@@ -29,7 +29,7 @@ public class TunerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.tuner_fragment, parent, false);
-        view = (CircleTunerView) v.findViewById(R.id.tuner_view);
+        view = (TunerView) v.findViewById(R.id.tuner_view);
         view.addOnNoteSelectedListener(new DialView.OnNoteSelectedListener() {
             @Override
             public void onNoteSelected(Note note, float x, float y) {
@@ -68,6 +68,12 @@ public class TunerFragment extends Fragment {
     public void start(){
         if(tuner != null){
             tuner.start();
+        }
+    }
+
+    public void stop(){
+        if(tuner != null){
+            tuner.stop();
         }
     }
 
