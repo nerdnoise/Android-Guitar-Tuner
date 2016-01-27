@@ -2,6 +2,7 @@ package com.chrynan.guitartuner.util;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 
 /**
  * Created by chRyNaN on 1/13/2016.
@@ -28,6 +29,15 @@ public class AudioUtils {
 
     public static final int getSampleRate(){
         return getSampleRate(false);
+    }
+
+    public static final int getDefaultEncodingFormat(){
+        return AudioFormat.ENCODING_PCM_16BIT;
+    }
+
+    public static final int getMinimumBufferSize(int sampleRate){
+        return AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT);
     }
 
 }

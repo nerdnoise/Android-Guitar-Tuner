@@ -49,6 +49,9 @@ public class Note implements Serializable{
 
     public static final double[] GUITAR_STANDARD_FREQUENCIES = new double[]{329.628, 246.942, 195.998, 146.832, 110.000, 82.4069};
 
+    public static final double[] GUITAR_C_TO_B_FREQUENCIES = new double[]{65.4064, 69.2957, 146.832, 155.563, 82.4069, 87.3071,
+            92.4986, 195.998, 207.652, 110.000, 116.541, 246.942};
+
     public static final double SEMITONE_INTERVAL = Math.pow(2, 1/12);
     public static final int UNKNOWN_POSITION = -1;
 

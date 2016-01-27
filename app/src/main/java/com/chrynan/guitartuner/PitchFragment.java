@@ -19,6 +19,7 @@ import android.widget.TextView;
  */
 public class PitchFragment extends Fragment {
     public static final String TAG = PitchFragment.class.getSimpleName();
+    private PitchPlayer player;
     private View viewRoot;
     private TextView text;
     private Note note;
@@ -55,6 +56,8 @@ public class PitchFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        player = new PitchPlayer();
+        player.play(note);
         viewRoot = inflater.inflate(R.layout.pitch_fragment, parent, false);
         text = (TextView) viewRoot.findViewById(R.id.note);
         if (note != null) {
@@ -77,11 +80,20 @@ public class PitchFragment extends Fragment {
                     }else {
                         ((TunerActivity) getActivity()).transitionBackToTunerFragment(null);
                     }
+                    player.stop();
                 }
                 return true;
             }
         });
         return viewRoot;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(player != null){
+            player.stop();
+        }
     }
 
     public void updateNote(Note note) {

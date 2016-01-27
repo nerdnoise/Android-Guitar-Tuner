@@ -2,6 +2,10 @@ package com.chrynan.guitartuner;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -12,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.chrynan.guitartuner.util.PermissionUtils;
+
+import java.util.Calendar;
 
 /**
  * Created by chRyNaN on 1/18/2016.
@@ -34,6 +40,7 @@ public class TunerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         tunerFragment = new TunerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, tunerFragment, TunerFragment.TAG).commit();
+        setTimedNotification();
     }
 
     @Override
@@ -114,6 +121,18 @@ public class TunerActivity extends AppCompatActivity {
             showCancel = false;
             invalidateOptionsMenu();
         }
+    }
+
+    private void setTimedNotification(){
+        //Send a notification to the user reminding them to tune their guitar if they haven't opened the app in awhile
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationPublishReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, NotificationPublishReceiver.REQUEST_CODE, intent, 0);
+        //Cancel any previously set alarms
+        alarmManager.cancel(alarmIntent);
+        //One week - 7 days, 24 hours, 60 minutes, 60 seconds, 1000 milliseconds
+        long time = Calendar.getInstance().getTimeInMillis() + (7 * 24 * 60 * 60 * 1000);
+        alarmManager.set(AlarmManager.RTC, time, alarmIntent);
     }
 
 }
