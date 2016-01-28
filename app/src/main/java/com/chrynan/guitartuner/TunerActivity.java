@@ -1,6 +1,5 @@
 package com.chrynan.guitartuner;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,6 +18,21 @@ import com.chrynan.guitartuner.util.PermissionUtils;
 
 import java.util.Calendar;
 
+/*
+ * Copyright 2016 chRyNaN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /**
  * Created by chRyNaN on 1/18/2016.
  * Circular Reveal Animation Transition help from here: https://gist.github.com/ferdy182/d9b3525aa65b5b4c468a
