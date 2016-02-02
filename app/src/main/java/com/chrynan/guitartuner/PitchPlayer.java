@@ -149,7 +149,6 @@ public class PitchPlayer implements PitchControl {
         for(i = 0; i < samples; i++){
             buffer.add(2 * Math.random() - 1);
         }
-        Log.d(TAG, "GENERATE NOISE: i = " + i);
         return buffer;
     }
 

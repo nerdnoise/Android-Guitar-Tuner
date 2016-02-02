@@ -125,6 +125,7 @@ public class Tuner {
 
     public void release(){
         Log.d(TAG, "release");
+        isRecording = false;
         if(audioRecord != null) {
             audioRecord.release();
         }

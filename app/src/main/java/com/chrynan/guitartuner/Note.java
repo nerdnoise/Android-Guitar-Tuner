@@ -121,6 +121,19 @@ public class Note implements Serializable{
         init(frequency);
     }
 
+    //If you want a Note object with the same values of another Note object but does not reference the other Note object.
+    public Note(Note note){
+        this.id = note.getId();
+        this.note = note.getNote();
+        this.frequency = note.getFrequency();
+        this.actualFrequency = note.getActualFrequency();
+        this.position = note.getPosition();
+        this.difference = note.getDifference();
+        this.noteBelowFrequency = note.getNoteBelowFrequency();
+        this.noteAboveFrequency = note.getNoteAboveFrequency();
+        this.index = note.getIndex();
+    }
+
     /*
      * To avoid reallocating space and instantiating a new object each time, this method provides a way
      * to use an existing Note object and update its attributes. Hopefully, this will save some time even if

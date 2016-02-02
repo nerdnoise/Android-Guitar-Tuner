@@ -2,7 +2,6 @@ package com.chrynan.guitartuner.view;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.util.Log;
 
 import com.chrynan.guitartuner.Note;
 
@@ -24,19 +23,23 @@ import com.chrynan.guitartuner.Note;
 /**
  * Created by chRyNaN on 1/21/2016. This class encapsulates an ObjectAnimator which will be used to animate
  * the IndicatorView within a CircleTunerView. The ObjectAnimator updates the IndicatorView's angle value which
- * changes its position.
+ * changes its position. There's a lot of computations occurring on the UI thread which may be problematic. Consider
+ * handling that logic on a different thread and posting to the UI thread with a Handler when needed.
  */
 public class IndicatorAnimator {
     private static final String TAG = IndicatorAnimator.class.getSimpleName();
     private IndicatorView view;
     private int duration;
     private float angle;
+    private float lastShownAngle;
     private ObjectAnimator anim;
+    private Note prevNote;
 
     public IndicatorAnimator(IndicatorView view){
         this.view = view;
         this.duration = 1000;
         this.angle = 0;
+        this.lastShownAngle = 0;
     }
 
     private void init(){
@@ -48,8 +51,11 @@ public class IndicatorAnimator {
         this.anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                if(view != null){
+                if(view != null && lastShownAngle != view.getAngle()){
                     view.showAngle();
+                    lastShownAngle = view.getAngle();
+                }else if(view != null){
+                    lastShownAngle = view.getAngle();
                 }
             }
         });
@@ -87,12 +93,31 @@ public class IndicatorAnimator {
     }
 
     public void start(Note note, double angleInterval){
-        if(angle != calculateNewAngle(note, angleInterval)){
+        if(prevNote == null || isDifferent(prevNote, note)){
+            calculateNewAngle(note, angleInterval);
             init();
             if (anim != null) {
                 anim.start();
             }
+            prevNote = new Note(note);
         }
+    }
+
+    private boolean isDifferent(Note oldNote, Note newNote){
+        if(oldNote != null && newNote != null){
+            if((oldNote.getActualFrequency() >= newNote.getActualFrequency()) &&
+                    ((oldNote.getActualFrequency() - 5.0) <= newNote.getActualFrequency()) &&
+                        oldNote.getNote().equals(newNote.getNote())){
+                return false;
+            }else if((oldNote.getActualFrequency() < newNote.getActualFrequency()) &&
+                    ((oldNote.getActualFrequency() + 5.0) >= newNote.getActualFrequency()) &&
+                    oldNote.getNote().equals(newNote.getNote())){
+                return false;
+            }else{
+                return true;
+            }
+        }
+        return false;
     }
 
     private float calculateNewAngle(Note note, double angleInterval){
@@ -115,8 +140,7 @@ public class IndicatorAnimator {
         }else if(newAngle > 360){
             newAngle = newAngle % 360;
         }
-        angle = (int) newAngle;
-        Log.d(TAG, "note = " + note.getNote() + "; angle = " + angle);
+        angle = newAngle;
         return angle;
     }
 

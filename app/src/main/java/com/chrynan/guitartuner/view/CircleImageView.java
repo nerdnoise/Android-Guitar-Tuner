@@ -34,7 +34,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.chrynan.guitartuner.R;
@@ -141,8 +140,6 @@ public class CircleImageView extends ImageView {
         if (mFillColor != Color.TRANSPARENT) {
             canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, mDrawableRadius, mFillPaint);
         }
-        Log.d(TAG, "centerX = " + mDrawableRect.centerX() + "; centerY = " + mDrawableRect.centerY());
-        Log.d(TAG, "getWidth / 2.0f = " + (getWidth() / 2.0f) + "; getHeight / 2.0f = " + (getHeight() / 2.0f));
         canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mBitmapPaint);
         if (mBorderWidth != 0) {
             canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, mBorderRadius, mBorderPaint);
@@ -323,7 +320,6 @@ public class CircleImageView extends ImageView {
         //Changing the mDrawableRect also (for some weird reason) changes the background fill colors radius (even though it shouldn't).
         //Bitmap is drawn with a Shader, so changing the Bitmap size probably won't work either.
         if(getScaleType() == ScaleType.CENTER){
-            Log.d(TAG, "WIDTH = " + getWidth());
             float side = (float) (Math.min(getHeight() / 2.0f, getWidth() / 2.0f) * Math.sqrt(2));
             mDrawableRect.set(getWidth() - side / 2, getHeight() - side / 2, getWidth() + side / 2, getHeight() + side / 2);
         }else {

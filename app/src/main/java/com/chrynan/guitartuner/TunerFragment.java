@@ -76,6 +76,7 @@ public class TunerFragment extends Fragment {
 
     @Override
     public void onDestroy(){
+        tuner.stop();
         tuner.release();
         super.onDestroy();
     }

@@ -200,18 +200,28 @@ public class IndicatorView extends View {
         //x = centerCircleX + radius * cos(angle)
         //y = centerCircleY + radius * sin(angle)
         //indicator "pointer"
-        Log.d(TAG, "showAngle: angle = " + angle);
         this.angle = angle;
-        point1 = new PointF((float) (centerX + (length * Math.cos(angle))),(float) (centerY + (length * Math.sin(angle))));
+
+        point1 = new PointF((float) (centerX + (length * Math.cos(Math.toRadians(angle)))),
+                (float) (centerY + (length * Math.sin(Math.toRadians(angle)))));
+
         double bRadius = ((double) bottomWidth) / 2;
         float bAngle = angle - 90;
+
         bAngle = (bAngle < 0) ? 360 - Math.abs(bAngle) : bAngle;
         bAngle = (bAngle > 360) ? bAngle % 360 : bAngle;
-        point2 = new PointF((float) (centerX + (bRadius * Math.cos(bAngle))), (float) (centerY + (bRadius * Math.sin(bAngle))));
+
+        point2 = new PointF((float) (centerX + (bRadius * Math.cos(Math.toRadians(bAngle)))),
+                (float) (centerY + (bRadius * Math.sin(Math.toRadians(bAngle)))));
+
         bAngle = angle + 90;
+
         bAngle = (bAngle < 0) ? 360 - Math.abs(bAngle) : bAngle;
         bAngle = (bAngle > 360) ? bAngle % 360 : bAngle;
-        point3 = new PointF((float) (centerX + (bRadius * Math.cos(bAngle))), (float) (centerY + bRadius * Math.sin(bAngle)));
+
+        point3 = new PointF((float) (centerX + (bRadius * Math.cos(Math.toRadians(bAngle)))),
+                (float) (centerY + bRadius * Math.sin(Math.toRadians(bAngle))));
+
         invalidate();
     }
 
