@@ -22,3 +22,5 @@ tuner.stop();
 //When we are done with the tuner object
 tuner.release();
 ```
+
+Feel free to use and alter the project in accordance with the license. Also, contributions are welcome.
