@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -107,6 +108,9 @@ public class TunerActivity extends AppCompatActivity {
                     if(tunerFragment != null) {
                         tunerFragment.init();
                     }
+                }else if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED){
+                    Toast.makeText(TunerActivity.this, "GuitarTuner needs access to the microphone to function.", Toast.LENGTH_LONG).show();
+                    TunerActivity.this.finish();
                 }
                 break;
         }
