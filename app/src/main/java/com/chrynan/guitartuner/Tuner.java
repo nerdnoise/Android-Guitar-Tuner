@@ -1,18 +1,14 @@
 package com.chrynan.guitartuner;
 
-import android.Manifest;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.View;
 
 import com.chrynan.guitartuner.tarsos.PitchDetectionResult;
 import com.chrynan.guitartuner.tarsos.Yin;
 import com.chrynan.guitartuner.util.AudioUtils;
-import com.chrynan.guitartuner.util.PermissionUtils;
 
 /*
  * Copyright 2016 chRyNaN
@@ -54,10 +50,7 @@ public class Tuner {
     //provide the tuner view implementing the TunerUpdate to the constructor
     public Tuner(TunerUpdate view){
         this.view = view;
-        if(view != null && view instanceof View &&
-                PermissionUtils.hasPermission(((View) view).getContext(), Manifest.permission.RECORD_AUDIO)) {
-            init();
-        }
+        init();
     }
 
     public void init(){
@@ -75,7 +68,6 @@ public class Tuner {
     }
 
     public void start(){
-        Log.d(TAG, "start");
         if(audioRecord != null) {
             isRecording = true;
             audioRecord.startRecording();
@@ -91,7 +83,6 @@ public class Tuner {
     }
 
     private void findNote(){
-        Log.d(TAG, "findNote");
         while(isRecording){
             amountRead = audioRecord.read(intermediaryBuffer, 0, readSize);
             buffer = shortArrayToFloatArray(intermediaryBuffer);
@@ -116,7 +107,6 @@ public class Tuner {
     }
 
     public void stop(){
-        Log.d(TAG, "stop");
         isRecording = false;
         if(audioRecord != null) {
             audioRecord.stop();
@@ -124,7 +114,6 @@ public class Tuner {
     }
 
     public void release(){
-        Log.d(TAG, "release");
         isRecording = false;
         if(audioRecord != null) {
             audioRecord.release();

@@ -3,7 +3,6 @@ package com.chrynan.guitartuner;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.util.Log;
 
 import com.chrynan.guitartuner.util.AudioUtils;
 

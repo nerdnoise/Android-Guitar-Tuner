@@ -3,7 +3,6 @@ package com.chrynan.guitartuner;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,41 +47,51 @@ public class TunerFragment extends Fragment {
         view.addOnNoteSelectedListener(new DialView.OnNoteSelectedListener() {
             @Override
             public void onNoteSelected(Note note, float x, float y) {
-                Log.d(TAG, "onNoteSelected: note = " + note + "; x = " + x + "; y = " + y);
-                if(getActivity() instanceof TunerActivity){
+                if (getActivity() instanceof TunerActivity) {
                     ((TunerActivity) getActivity()).transitionToPitchFragment(note, x, y);
                 }
             }
         });
-        tuner = new Tuner(view);
+        if(!PermissionUtils.hasPermission(getActivity(), Manifest.permission.RECORD_AUDIO)){
+            PermissionUtils.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION_REQUEST_CODE);
+        }
         return v;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        if(tuner.isInitialized()) {
+        if(tuner != null && tuner.isInitialized()) {
             tuner.start();
-        }else{
+        }else if(!PermissionUtils.hasPermission(getActivity(), Manifest.permission.RECORD_AUDIO)){
             PermissionUtils.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, AUDIO_PERMISSION_REQUEST_CODE);
+        }else{
+            init();
         }
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        tuner.stop();
+        if(tuner != null) {
+            tuner.stop();
+        }
     }
 
     @Override
     public void onDestroy(){
-        tuner.stop();
-        tuner.release();
+        if(tuner != null) {
+            tuner.stop();
+            tuner.release();
+        }
         super.onDestroy();
     }
 
     public void start(){
-        if(tuner != null){
+        if(tuner == null && view != null){
+            tuner = new Tuner(view);
+            tuner.start();
+        }else if(tuner != null){
             tuner.start();
         }
     }
@@ -90,6 +99,13 @@ public class TunerFragment extends Fragment {
     public void stop(){
         if(tuner != null){
             tuner.stop();
+        }
+    }
+
+    public void init(){
+        if(view != null && PermissionUtils.hasPermission(getActivity(), Manifest.permission.RECORD_AUDIO)){
+            tuner = new Tuner(view);
+            tuner.start();
         }
     }
 

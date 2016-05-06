@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.chrynan.guitartuner.Note;

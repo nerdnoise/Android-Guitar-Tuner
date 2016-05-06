@@ -10,11 +10,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.chrynan.guitartuner.util.PermissionUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.Calendar;
 
@@ -43,10 +43,10 @@ public class TunerActivity extends AppCompatActivity {
     private TunerFragment tunerFragment;
     private PitchFragment pitchFragment;
     private boolean showCancel;
+    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         showCancel = false;
         setContentView(R.layout.tuner_activity);
@@ -55,6 +55,15 @@ public class TunerActivity extends AppCompatActivity {
         tunerFragment = new TunerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, tunerFragment, TunerFragment.TAG).commit();
         setTimedNotification();
+
+        mAdView = (AdView) findViewById(R.id.adView);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -82,12 +91,21 @@ public class TunerActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed(){
+        if(showCancel){
+            transitionBackToTunerFragment(pitchFragment.unreveal(pitchFragment.getX(), pitchFragment.getY()));
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
         switch(requestCode){
             case TunerFragment.AUDIO_PERMISSION_REQUEST_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if(tunerFragment != null) {
-                        tunerFragment.start();
+                        tunerFragment.init();
                     }
                 }
                 break;
@@ -95,11 +113,13 @@ public class TunerActivity extends AppCompatActivity {
     }
 
     public void transitionToPitchFragment(Note note, float x, float y){
-        pitchFragment = PitchFragment.newInstance(note, x, y);
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, pitchFragment, PitchFragment.TAG).commit();
-        tunerFragment.stop();
-        showCancel = true;
-        invalidateOptionsMenu();
+        if(!showCancel) {
+            pitchFragment = PitchFragment.newInstance(note, x, y);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, pitchFragment, PitchFragment.TAG).commit();
+            tunerFragment.stop();
+            showCancel = true;
+            invalidateOptionsMenu();
+        }
     }
 
     public void transitionBackToTunerFragment(Animator anim){
