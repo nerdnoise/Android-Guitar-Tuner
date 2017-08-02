@@ -14,9 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.Calendar;
 
 /*
@@ -44,7 +41,6 @@ public class TunerActivity extends AppCompatActivity {
     private TunerFragment tunerFragment;
     private PitchFragment pitchFragment;
     private boolean showCancel;
-    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -56,15 +52,6 @@ public class TunerActivity extends AppCompatActivity {
         tunerFragment = new TunerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, tunerFragment, TunerFragment.TAG).commit();
         setTimedNotification();
-
-        mAdView = (AdView) findViewById(R.id.adView);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
     }
 
     @Override
