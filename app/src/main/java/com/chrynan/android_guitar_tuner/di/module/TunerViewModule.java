@@ -5,9 +5,12 @@ import android.content.Context;
 import com.chrynan.android_guitar_tuner.di.ApplicationContext;
 import com.chrynan.android_guitar_tuner.di.FragmentScope;
 import com.chrynan.android_guitar_tuner.presenter.TunerPresenter;
+import com.chrynan.android_guitar_tuner.tuner.AndroidAudioConfig;
 import com.chrynan.android_guitar_tuner.tuner.AndroidTuner;
+import com.chrynan.android_guitar_tuner.tuner.AudioConfig;
 import com.chrynan.android_guitar_tuner.tuner.Tuner;
 import com.chrynan.android_guitar_tuner.tuner.detection.PitchDetector;
+import com.chrynan.android_guitar_tuner.tuner.detection.YINPitchDetector;
 import com.chrynan.android_guitar_tuner.tuner.note.ArrayNoteFinder;
 import com.chrynan.android_guitar_tuner.tuner.note.NoteFinder;
 import com.chrynan.android_guitar_tuner.ui.view.TunerView;
@@ -29,9 +32,14 @@ public class TunerViewModule {
 
     @Provides
     @FragmentScope
-    PitchDetector providePitchDetector() {
-        // TODO
-        return null;
+    AudioConfig provideAudioConfig() {
+        return new AndroidAudioConfig();
+    }
+
+    @Provides
+    @FragmentScope
+    PitchDetector providePitchDetector(AudioConfig audioConfig) {
+        return new YINPitchDetector(audioConfig);
     }
 
     @Provides
@@ -42,8 +50,8 @@ public class TunerViewModule {
 
     @Provides
     @FragmentScope
-    Tuner provideTuner(PitchDetector detector, NoteFinder finder) {
-        return new AndroidTuner(detector, finder);
+    Tuner provideTuner(AudioConfig audioConfig, PitchDetector detector, NoteFinder finder) {
+        return new AndroidTuner(audioConfig, detector, finder);
     }
 
     @Provides

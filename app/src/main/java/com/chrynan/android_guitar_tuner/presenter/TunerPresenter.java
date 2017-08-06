@@ -4,14 +4,13 @@ import android.content.Context;
 
 import com.chrynan.android_guitar_tuner.di.ApplicationContext;
 import com.chrynan.android_guitar_tuner.tuner.Tuner;
-import com.chrynan.android_guitar_tuner.tuner.TunerListener;
 import com.chrynan.android_guitar_tuner.ui.TuningState;
 import com.chrynan.android_guitar_tuner.ui.view.TunerView;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TunerPresenter implements Presenter, TunerListener {
+public class TunerPresenter implements Presenter, Tuner.Listener {
 
     private final TunerView view;
     @ApplicationContext
@@ -29,7 +28,7 @@ public class TunerPresenter implements Presenter, TunerListener {
         this.applicationContext = applicationContext;
         this.tuner = tuner;
 
-        tuner.setTunerListener(this);
+        tuner.setListener(this);
     }
 
     @Override
